@@ -4,7 +4,7 @@ require "card"
 
 DrawPileClass = {}
 
-function DrawPileClass:new(xPos, yPos, cards, deck)
+function DrawPileClass:new(xPos, yPos, cards, deck, hand)
   local drawPile = {}
   local metadata = {__index = DrawPileClass}
   setmetatable(drawPile, metadata)
@@ -14,6 +14,9 @@ function DrawPileClass:new(xPos, yPos, cards, deck)
   drawPile.cards = cards
   drawPile.drawnCards = {}
   drawPile.deck = deck
+  drawPile.hand = hand
+  
+  drawPile.sprite = love.graphics.newImage("Sprites/card_back.png")
   
   drawPile.buffer = true
   
@@ -22,7 +25,7 @@ end
 
 function DrawPileClass:draw()
   love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
+  love.graphics.draw(self.sprite, self.position.x, self.position.y, 0, 1, 1)
 end
 
 function DrawPileClass:update()
@@ -51,34 +54,16 @@ function DrawPileClass:checkForMouseOver()
 end
 
 function DrawPileClass:drawCards()
-  if #self.deck.cards < 3 then
-    if #self.deck.cards == 0 then
-      return
-    elseif #self.deck.cards == 1 then
-      local card1 = CardClass:new(250, 135, self.deck:popCard(), true, true)
-      table.insert(self.cards, card1)
-      table.insert(self.drawnCards, card1)
-    else
-      local card1 = CardClass:new(250, 135, self.deck:popCard(), true, true)
-      table.insert(self.cards, card1)
-      table.insert(self.drawnCards, card1)
-      local card2 = CardClass:new(225, 135, self.deck:popCard(), false, true)
-      table.insert(self.cards, card1)
-      table.insert(self.drawnCards, card1)
-    end
+  local handCards = self.hand:getPileCards()
+  for i = 1, #self.drawnCards do
+    self.hand:removeCard(handCards[1])
+    table.remove(self.drawnCards)
   end
-  for i, card in ipairs(self.drawnCards) do
-    card.position.x = 200
-    card.position.y = 135
-    card.draggable = false
+  local loops = math.min(#self.deck.cards, 3)
+  for i = 1, loops do
+    local card1 = CardClass:new(250, 135, self.deck:popCard(), true, true)
+    table.insert(self.cards, card1)
+    table.insert(self.drawnCards, card1)
+    self.hand:addCard(card1)
   end
-  local card1 = CardClass:new(200, 135, self.deck:popCard(), false, true)
-  local card2 = CardClass:new(225, 135, self.deck:popCard(), false, true)
-  local card3 = CardClass:new(250, 135, self.deck:popCard(), true, true)
-  table.insert(self.cards, card1)
-  table.insert(self.cards, card2)
-  table.insert(self.cards, card3)
-  table.insert(self.drawnCards, card1)
-  table.insert(self.drawnCards, card2)
-  table.insert(self.drawnCards, card3)
 end

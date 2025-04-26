@@ -34,6 +34,8 @@ function PileClass:draw()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
   end
+  love.graphics.setColor(1, 1, 1, 1)
+  love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
   for _, card in ipairs(self.cards) do
     card:draw()
   end
@@ -72,9 +74,12 @@ function PileClass:addCard(card)
 end
 
 function PileClass:removeCard(card)
+  if card == nil then return end
   table.remove(self.cards)
-  for i, iCard in ipairs(self.cards) do
-    card.position.x = self.position.x --+ self.size.x / 2
-    card.position.y = (self.position.y + self.size.y / 2) + ((i-1) * 15 * self.type)
-  end
+  card.position.x = self.position.x --+ self.size.x / 2
+  card.position.y = (self.position.y + self.size.y / 2) + ((#self.cards-1) * 15 * self.type)
+end
+
+function PileClass:getPileCards()
+  return self.cards
 end

@@ -18,7 +18,6 @@ function love.load()
   deck:fillDeck()
   cardTable = {}
   pileTable = {}
-  drawPile = DrawPileClass:new(100, 100, cardTable, deck)
   
   table.insert(pileTable, PileClass:new(100, 300, 1))
   table.insert(pileTable, PileClass:new(200, 300, 1))
@@ -32,6 +31,10 @@ function love.load()
   table.insert(pileTable, PileClass:new(500, 100, 0))
   table.insert(pileTable, PileClass:new(600, 100, 0))
   table.insert(pileTable, PileClass:new(700, 100, 0))
+  
+  table.insert(pileTable, PileClass:new(250, 100, 1))
+  
+  drawPile = DrawPileClass:new(100, 100, cardTable, deck, pileTable[12])
   
   gameSetup()
 end

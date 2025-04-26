@@ -80,21 +80,23 @@ function GrabberClass:release()
   -- TODO: eventually check if release position is invalid and if it is
   -- return the heldObject to the grabPosition
   self.grabPos = self.currentMousePos
-  local isValidReleasePosition = true -- *insert actual check instead of "true"*
+  local isValidReleasePosition = false -- *insert actual check instead of "true"*
   self.currentPile = nil
   for _, pile in ipairs(pileTable) do
     isValidReleasePosition = pile:checkForMouseOver(self)
     if isValidReleasePosition then
       self.currentPile = pile
+      break
     end
   end
-  if self.prevPile ~= nil then
-    self.prevPile:removeCard(self.heldObject)
+  if isValidReleasePosition then
+    if self.prevPile ~= nil then
+      self.prevPile:removeCard(self.heldObject)
+    end
+    if self.currentPile ~= nil then
+      self.currentPile:addCard(self.heldObject)
+    end
   end
-  if self.currentPile ~= nil then
-    self.currentPile:addCard(self.heldObject)
-  end
-  
   self.heldObject.state = 0 -- it's no longer grabbed
   
   self.heldObject = nil
