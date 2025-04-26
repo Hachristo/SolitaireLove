@@ -30,9 +30,10 @@ function PileClass:update()
 end
 
 function PileClass:draw()
-  love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
-  
+  if self.type ~= 1 then
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
+  end
   for _, card in ipairs(self.cards) do
     card:draw()
   end
@@ -44,11 +45,20 @@ function PileClass:checkForMouseOver(grabber)
   end
     
   local mousePos = grabber.currentMousePos
-  local isMouseOver = 
-    mousePos.x > self.position.x and
-    mousePos.x < self.position.x + self.size.x and
-    mousePos.y > self.position.y and
-    mousePos.y < self.position.y + self.size.y
+  local isMouseOver= false
+  if self.type == 1 then
+    isMouseOver = 
+      mousePos.x > self.position.x and
+      mousePos.x < self.position.x + self.size.x and
+      mousePos.y > self.position.y and
+      mousePos.y < (self.position.y + self.size.y) * 3
+  else
+    isMouseOver = 
+      mousePos.x > self.position.x and
+      mousePos.x < self.position.x + self.size.x and
+      mousePos.y > self.position.y and
+      mousePos.y < self.position.y + self.size.y
+  end
   
   return isMouseOver
 end
