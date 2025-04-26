@@ -1,13 +1,13 @@
-# SolitaireLove
-
-**Programming Patterns Used**
+# SolitaireLove  
+  
+**Programming Patterns Used**  
 I used the update programming pattern for essentially all of this project. My reasoning for this intially was that I felt that the project would be 
 simple enough that implementing more complex patterns would save less time in the production phase of the project than it would take to set them up
 in the preproduction phase. Looking back on it now, I regret having chosen to do this, as it made my code less and less readable the more I added. I
 did my best to seperate functionality with an object oriented mindset, but debugging became a problem the more I added, and led to me running out of
 time to fix everything. I have some ideas for how I could've used other programming patterns, which I'll detail in the postmortem section.
 
-**Postmortem**
+**Postmortem**  
 To start with a positive, I think that I did a good job with making seperate classes and keeping main relatively empty. Looking at the classes (tables),
 it's clear what each one's purpose is, and many of them inherit functionality from other classes appropriately.
 Looking back, I realized that there were a few programming patterns that we've been going over in class that I should've employed here. The first thing that
@@ -17,5 +17,5 @@ Another pattern that might've helped especially with debugging is the observer p
 card stacking, and card removing would've removed the need for many of the update loops, which would've improved performance, but more importantly would've helped
 keep my code more readable.
 
-**Asset List**
+**Asset List**  
 Sprites: https://kenney.nl/assets/playing-cards-pack
