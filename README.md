@@ -13,7 +13,7 @@ written a lot more redundant code.
 I got feedback from Drew Whitmer on how I could clean up some of the clutter in my files. I deleted a lot of commented out code from older iterations of
 the project, and added more inline comments, mainly in grabber, to explain what my code was doing.
 
-**Postmortem**
+**Postmortem**  
 One of the main things that gave me problems in my refactor for this iteration of the project was the card stacking when dragging cards. I resolved to do this
 by changing the held object variable in my grabber class to be a table containing all the cards that I wanted to drag. I was stuck for a while trying to accomplish
 this because my grabber class kept getting longer and longer as I added more functionality to it, and I spent hours trying to debug what ended up being a small
