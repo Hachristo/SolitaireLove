@@ -4,7 +4,7 @@ require "card"
 
 DrawPileClass = {}
 
-function DrawPileClass:new(xPos, yPos, cards, deck, hand)
+function DrawPileClass:new(xPos, yPos, cards, deck, hand, discard)
   local drawPile = {}
   local metadata = {__index = DrawPileClass}
   setmetatable(drawPile, metadata)
@@ -12,9 +12,9 @@ function DrawPileClass:new(xPos, yPos, cards, deck, hand)
   drawPile.position = Vector(xPos, yPos)
   drawPile.size = Vector(50, 70)
   drawPile.cards = cards
-  drawPile.drawnCards = {}
   drawPile.deck = deck
   drawPile.hand = hand
+  drawPile.discard = discard
   
   drawPile.sprite = love.graphics.newImage("Sprites/card_back.png")
   
@@ -55,15 +55,14 @@ end
 
 function DrawPileClass:drawCards()
   local handCards = self.hand:getPileCards()
-  for i = 1, #self.drawnCards do
+  for i = 1, 3 do
     self.hand:removeCard(handCards[1])
-    table.remove(self.drawnCards)
+    self.discard:addCard(handCards[1])
   end
   local loops = math.min(#self.deck.cards, 3)
   for i = 1, loops do
     local card1 = CardClass:new(250, 135, self.deck:popCard(), true, true)
     table.insert(self.cards, card1)
-    table.insert(self.drawnCards, card1)
     self.hand:addCard(card1)
   end
 end

@@ -36,7 +36,7 @@ function love.load()
   
   table.insert(pileTable, PileClass:new(300, 100, 3))
   
-  drawPile = DrawPileClass:new(100, 100, cardTable, deck, pileTable[12])
+  drawPile = DrawPileClass:new(100, 100, cardTable, deck, pileTable[12], pileTable[13])
   
   gameSetup()
 end

@@ -49,7 +49,7 @@ function GrabberClass:grab()
       card.state = 2
     end
   end
-  if self.heldObject == {} then
+  if #self.heldObject == 0 then
     self.grabPos = nil
   else
     local prevPrevPile = nil
@@ -64,6 +64,7 @@ function GrabberClass:grab()
       self.prevPile = prevPrevPile
     end
     local indexReached = false
+    if self.prevPile == nil then return end
     for _, card in ipairs(self.prevPile.cards) do
       if indexReached then
         table.insert(self.heldObject, card)
@@ -86,6 +87,7 @@ end
 function GrabberClass:release()
   -- NEW: some more logic stubs here
   if self.heldObject == {} then -- we have nothing to release
+    self.grabPos = nil
     return
   end
 
@@ -101,9 +103,19 @@ function GrabberClass:release()
       break
     end
   end
+  
+  local validPlacement = false
+  if self.currentPile == nil then return end
+  if self.currentPile.type == 1 then
+    validPlacement = self:checkValidTableauPosition()
+  elseif self.currentPile.type == 0 then
+    validPlacement = self:checkValidAcePilePosition()
+  else
+    validPlacement = false;
+  end
 
 
-  if isValidReleasePosition then
+  if isValidReleasePosition and validPlacement then
     if self.prevPile ~= nil then
       for _, card in ipairs(self.heldObject) do
         self.prevPile:removeCard(card)
@@ -117,7 +129,9 @@ function GrabberClass:release()
 --      self.currentPile:addCard(self.heldObject)
     end
   else
-    self.prevPile:refreshPile()
+    if self.prevPile ~= nil then
+      self.prevPile:refreshPile()
+    end
   end
 
   for _, card in ipairs(self.heldObject) do
@@ -128,4 +142,53 @@ function GrabberClass:release()
     self.heldObject[k] = nil
   end
   self.grabPos = nil
+end
+
+function GrabberClass:checkValidTableauPosition()
+  local topCard = self.currentPile:getPileCards()[#self.currentPile:getPileCards()]
+  local bottomCard = self.heldObject[1]
+  if topCard == nil then
+    if tonumber(bottomCard.number) == 13 then
+      return true
+    else
+      return false
+    end
+  end
+  if topCard.suit == "hearts" or topCard.suit == "diamonds" then
+    if bottomCard.suit == "hearts" or bottomCard.suit == "diamonds" then
+      print("wrong suit")
+      return false
+    elseif tonumber(topCard.number) - tonumber(bottomCard.number) ~= 1 then
+      print("wrong number")
+      return false
+    else
+      return true
+    end
+  elseif topCard.suit == "spades" or topCard.suit == "clubs" then
+    if bottomCard.suit == "spades" or bottomCard.suit == "clubs" then
+      print("wrong suit")
+      return false
+    elseif tonumber(topCard.number) - tonumber(bottomCard.number) ~= 1 then
+      print("wrong number")
+      return false
+    else
+      return true
+    end
+  end
+end
+
+function GrabberClass:checkValidAcePilePosition()
+  if #self.heldObject > 1 then return false end
+  local topCard = self.heldObject[1]
+  local bottomCard = self.currentPile:getPileCards()[#self.currentPile:getPileCards()]
+  if bottomCard == nil then
+    if tonumber(topCard.number) == 1 then return true end
+  end
+  if topCard.suit == bottomCard.suit then
+    if tonumber(topCard.number) - tonumber(bottomCard.number) == 1 then
+      return true
+    else
+      return false
+    end
+  end
 end
