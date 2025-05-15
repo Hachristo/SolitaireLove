@@ -13,6 +13,7 @@ function PileClass:new(xPos, yPos, tableau)
   pile.cards = {}
   
   pile.type = tableau
+  pile.complete = false
   
   return pile
 end
@@ -113,6 +114,11 @@ function PileClass:addCard(card)
   if self.type == 1 or self.type == 2 then
     spacing = 1
   end
+  if self.type == 0 then
+    if card.number == 13 then
+      self.complete = true
+    end
+  end
   table.insert(self.cards, card)
   for i, iCard in ipairs(self.cards) do
     iCard.position.x = self.position.x
@@ -121,14 +127,18 @@ function PileClass:addCard(card)
 end
 
 function PileClass:removeCard(card)
-  if card == nil then return end
+  if card == nil then
+    return
+  end
   local index = -1;
   for i, iCard in ipairs(self.cards) do
     if card == iCard then
       index = i
     end
   end
-  if index == -1 then return end
+  if index == -1 then
+    return
+  end
   table.remove(self.cards, index)
 end
 

@@ -57,8 +57,8 @@ end
 function DrawPileClass:drawCards()
   local handCards = self.hand:getPileCards()
   for i = 1, 3 do
-    self.hand:removeCard(handCards[1])
     self.discard:addCard(handCards[1])
+    self.hand:removeCard(handCards[1])
   end
   local loops = math.min(#self.deck.cards, 3)
   if loops == 0 then
