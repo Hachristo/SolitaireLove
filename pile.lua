@@ -57,6 +57,7 @@ function PileClass:acePileUpdate()
     else
       iCard.side = false
       iCard.draggable = false
+      iCard.state = 0
     end
   end
 end
@@ -69,6 +70,7 @@ function PileClass:handUpdate()
     else
       iCard.side = true
       iCard.draggable = false
+      iCard.state = 0
     end
   end
 end
@@ -77,6 +79,7 @@ function PileClass:discardUpdate()
   for i, iCard in ipairs(self.cards) do
     iCard.side = false
     iCard.draggable = false
+    iCard.state = 0
   end
 end
 
@@ -87,7 +90,7 @@ function PileClass:checkForMouseOver(grabber)
     
   local mousePos = grabber.currentMousePos
   local isMouseOver= false
-  if self.type == TableauType.TABLEAU then
+  if self.type == 1 then
     isMouseOver = 
       mousePos.x > self.position.x and
       mousePos.x < self.position.x + self.size.x and

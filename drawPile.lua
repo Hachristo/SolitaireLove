@@ -15,6 +15,7 @@ function DrawPileClass:new(xPos, yPos, cards, deck, hand, discard)
   drawPile.deck = deck
   drawPile.hand = hand
   drawPile.discard = discard
+  drawPile.refill = false
   
   drawPile.sprite = love.graphics.newImage("Sprites/card_back.png")
   
@@ -60,9 +61,22 @@ function DrawPileClass:drawCards()
     self.discard:addCard(handCards[1])
   end
   local loops = math.min(#self.deck.cards, 3)
-  for i = 1, loops do
-    local card1 = CardClass:new(250, 135, self.deck:popCard(), true, true)
-    table.insert(self.cards, card1)
-    self.hand:addCard(card1)
+  if loops == 0 then
+    self.deck:refillDeck()
+    self.refill = true
+  else
+    if self.refill then
+      for i = 1, loops do
+        local card1 = CardClass:new(250, 135, self.deck:removeTopCard(), true, true)
+        table.insert(self.cards, card1)
+        self.hand:addCard(card1)
+      end
+    else
+      for i = 1, loops do
+        local card1 = CardClass:new(250, 135, self.deck:popCard(), true, true)
+        table.insert(self.cards, card1)
+        self.hand:addCard(card1)
+      end
+    end
   end
 end

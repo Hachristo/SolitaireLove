@@ -11,8 +11,6 @@ function love.load()
   love.graphics.setBackgroundColor(0, 0.7, 0.2, 1)
   
   grabber = GrabberClass:new()
-  deck = DeckClass:new()
-  deck:fillDeck()
   cardTable = {}
   pileTable = {}
   
@@ -32,6 +30,9 @@ function love.load()
   table.insert(pileTable, PileClass:new(200, 100, 2))
   
   table.insert(pileTable, PileClass:new(300, 100, 3))
+  
+  deck = DeckClass:new(pileTable[13])
+  deck:fillDeck()
   
   drawPile = DrawPileClass:new(100, 100, cardTable, deck, pileTable[12], pileTable[13])
   

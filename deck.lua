@@ -22,12 +22,13 @@ Numbers = {
   [13] = "13"
 }
 
-function DeckClass:new()
+function DeckClass:new(discard)
   local deck = {}
   local metadata = {__index = DeckClass}
   setmetatable(deck, metadata)
   
   deck.cards = {}
+  deck.discard = discard
   
   math.randomseed(os.time())
   
@@ -43,9 +44,28 @@ function DeckClass:fillDeck()
   end
 end
 
+function DeckClass:refillDeck()
+  --print(#deck.cards)
+  for _, tableCard in ipairs(self.discard.cards) do
+    local card = "card_" .. tableCard.suit .. "_" .. tableCard.number .. ".png"
+    table.insert(deck.cards, card)
+  end
+  --print(#deck.cards)
+  local length = #self.discard.cards
+  for i = 1, length do
+    table.remove(self.discard.cards, 1)
+  end
+end
+
 function DeckClass:popCard()
   local cardIndex = math.random(#deck.cards)
   local card = deck.cards[cardIndex]
   table.remove(deck.cards, cardIndex)
+  return card
+end
+
+function DeckClass:removeTopCard()
+  local card = deck.cards[#deck.cards]
+  table.remove(deck.cards)
   return card
 end
