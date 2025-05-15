@@ -3,6 +3,13 @@ require "vector"
 
 PileClass = {}
 
+TableauType = {
+  ACEPILE = 0,
+  TABLEAU = 1,
+  HAND = 2,
+  DISCARD = 3
+}
+
 function PileClass:new(xPos, yPos, tableau)
   local pile = {}
   local metadata = {__index = PileClass}
@@ -18,26 +25,65 @@ function PileClass:new(xPos, yPos, tableau)
 end
 
 function PileClass:update()
-  for i, iCard in ipairs(self.cards) do
-    if i == #self.cards then
-      iCard.side = true
-      iCard.draggable = true
---    else
---      iCard.side = false
---      iCard.draggable = false
-    end
+  if self.type == 1 then
+    self:tableauUpdate()
+  elseif self.type == 0 then
+    self:acePileUpdate()
+  elseif self.type == 2 then
+    self:handUpdate()
+  elseif self.type == 3 then
+    self:discardUpdate()
   end
 end
 
 function PileClass:draw()
-  if self.type ~= 1 then
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
-  end
   love.graphics.setColor(1, 1, 1, 1)
   love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
   for _, card in ipairs(self.cards) do
     card:draw()
+  end
+end
+
+function PileClass:tableauUpdate()
+  for i, iCard in ipairs(self.cards) do
+    if i == #self.cards then
+      iCard.side = true
+      iCard.draggable = true
+      iCard.bottomCard = true
+    else
+      iCard.bottomCard = false
+    end
+  end
+end
+
+function PileClass:acePileUpdate()
+  for i, iCard in ipairs(self.cards) do
+    if i == #self.cards then
+      iCard.side = true
+      iCard.draggable = true
+    else
+      iCard.side = false
+      iCard.draggable = false
+    end
+  end
+end
+
+function PileClass:handUpdate()
+  for i, iCard in ipairs(self.cards) do
+    if i == #self.cards then
+      iCard.side = true
+      iCard.draggable = true
+    else
+      iCard.side = true
+      iCard.draggable = false
+    end
+  end
+end
+
+function PileClass:discardUpdate()
+  for i, iCard in ipairs(self.cards) do
+    iCard.side = false
+    iCard.draggable = false
   end
 end
 
@@ -48,7 +94,7 @@ function PileClass:checkForMouseOver(grabber)
     
   local mousePos = grabber.currentMousePos
   local isMouseOver= false
-  if self.type == 1 then
+  if self.type == TableauType.TABLEAU then
     isMouseOver = 
       mousePos.x > self.position.x and
       mousePos.x < self.position.x + self.size.x and
@@ -66,18 +112,44 @@ function PileClass:checkForMouseOver(grabber)
 end
 
 function PileClass:addCard(card)
+  local spacing = 0
+  if self.type == 1 or self.type == 2 then
+    spacing = 1
+  end
   table.insert(self.cards, card)
   for i, iCard in ipairs(self.cards) do
     iCard.position.x = self.position.x --+ self.size.x / 2
-    iCard.position.y = self.position.y + ((i-1) * 15 * self.type)
+    iCard.position.y = self.position.y + ((i-1) * 15 * spacing)
   end
 end
 
 function PileClass:removeCard(card)
+--  local spacing = 0
+--  if self.type == 1 or self.type == 2 then
+--    spacing = 1
+--  end
   if card == nil then return end
-  table.remove(self.cards)
-  card.position.x = self.position.x --+ self.size.x / 2
-  card.position.y = (self.position.y + self.size.y / 2) + ((#self.cards-1) * 15 * self.type)
+  local index = -1;
+  for i, iCard in ipairs(self.cards) do
+    if card == iCard then
+      index = i
+    end
+  end
+  if index == -1 then return end
+  table.remove(self.cards, index)
+--  card.position.x = self.position.x --+ self.size.x / 2
+--  card.position.y = (self.position.y + self.size.y / 2) + ((#self.cards-1) * 15 * spacing)
+end
+
+function PileClass:refreshPile()
+  local spacing = 0
+  if self.type == 1 or self.type == 2 then
+    spacing = 1
+  end
+  for i, iCard in ipairs(self.cards) do
+    iCard.position.x = self.position.x --+ self.size.x / 2
+    iCard.position.y = self.position.y + ((i-1) * 15 * spacing)
+  end
 end
 
 function PileClass:getPileCards()
