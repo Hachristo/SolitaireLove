@@ -1,6 +1,3 @@
--- Zac Emerzian
--- CMPM 121 - Pickup
--- 4-11-25
 io.stdout:setvbuf("no")
 
 require "card"
@@ -63,9 +60,6 @@ function love.draw()
   for _, pile in ipairs(pileTable) do
     pile:draw()
   end
-  
-  love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.print("Mouse: " .. tostring(grabber.currentMousePos.x) .. ", " .. tostring(grabber.currentMousePos.y))
 end
 
 function checkForMouseMoving()

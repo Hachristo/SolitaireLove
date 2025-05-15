@@ -48,8 +48,6 @@ function CardClass:draw()
   else
     love.graphics.draw(self.back, self.position.x, self.position.y, 0, self.scale, self.scale)
   end
---  love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y)
-    -- love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
 end
 
 function CardClass:checkForMouseOver(grabber)

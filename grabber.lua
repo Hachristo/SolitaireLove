@@ -32,10 +32,10 @@ function GrabberClass:update()
   if love.mouse.isDown(1) and self.grabPos == nil then
     self:grab()
   end
-  -- Release
   if love.mouse.isDown(1) and self.grabPos ~= nil then
     self:drag()
   end
+  -- Release
   if not love.mouse.isDown(1) and self.grabPos ~= nil then
     self:release()
   end  
@@ -43,15 +43,18 @@ end
 
 function GrabberClass:grab()
   self.grabPos = self.currentMousePos
+  -- insert mouseOvered card into grabbed stack
   for _, card in ipairs(cardTable) do
     if card.state == 1 then
       table.insert(self.heldObject, card)
       card.state = 2
     end
   end
+  -- if we grabbed nothing then there is no grab position
   if #self.heldObject == 0 then
     self.grabPos = nil
   else
+    -- check which pile we grabbed a card from
     local prevPrevPile = nil
     for i, pile in ipairs(pileTable) do
       for x, card in ipairs(pile.cards) do
@@ -60,9 +63,11 @@ function GrabberClass:grab()
         end
       end
     end
+    -- if card was grabbed from a pile set the previous pile to that pile (used for adding and removing cards from piles later)
     if prevPrevPile ~= nil then
       self.prevPile = prevPrevPile
     end
+    -- grab cards below
     local indexReached = false
     if self.prevPile == nil then return end
     for _, card in ipairs(self.prevPile.cards) do
@@ -78,23 +83,20 @@ end
 
 function GrabberClass:drag()
   self.grabPos = self.currentMousePos
-  --self.heldObject.position = self.grabPos
   for i, card in ipairs(self.heldObject) do
     card.position = self.grabPos + Vector(0, (i - 1) * 15)
   end
 end
 
 function GrabberClass:release()
-  -- NEW: some more logic stubs here
   if self.heldObject == {} then -- we have nothing to release
     self.grabPos = nil
     return
   end
 
-  -- TODO: eventually check if release position is invalid and if it is
-  -- return the heldObject to the grabPosition
+  -- find the pile we are attempting to release the stack into
   self.grabPos = self.currentMousePos
-  local isValidReleasePosition = false -- *insert actual check instead of "true"*
+  local isValidReleasePosition = false 
   self.currentPile = nil
   for _, pile in ipairs(pileTable) do
     isValidReleasePosition = pile:checkForMouseOver(self)
@@ -104,6 +106,7 @@ function GrabberClass:release()
     end
   end
   
+  -- check if card can go onto new pile
   local validPlacement = false
   if self.currentPile == nil then return end
   if self.currentPile.type == 1 then
@@ -114,30 +117,32 @@ function GrabberClass:release()
     validPlacement = false;
   end
 
-
   if isValidReleasePosition and validPlacement then
+    -- if there was a pile that we took the card stack from, remove those cards from the pile
     if self.prevPile ~= nil then
       for _, card in ipairs(self.heldObject) do
         self.prevPile:removeCard(card)
       end
---      self.prevPile:removeCard(self.heldObject)
     end
+    -- if there is a pile that we are adding a card stack to, add those cards to the pile
     if self.currentPile ~= nil then
       for _, card in ipairs(self.heldObject) do
         self.currentPile:addCard(card)
       end
---      self.currentPile:addCard(self.heldObject)
     end
   else
+    -- if we dragged a stack but didn't drop it in a valid spot then snap the cards back to the old spot
     if self.prevPile ~= nil then
       self.prevPile:refreshPile()
     end
   end
 
+  -- set the cards to be idle
   for _, card in ipairs(self.heldObject) do
     card.state = 0
   end
 
+  -- clear the held object table
   for k in pairs(self.heldObject) do
     self.heldObject[k] = nil
   end
@@ -145,8 +150,11 @@ function GrabberClass:release()
 end
 
 function GrabberClass:checkValidTableauPosition()
+  -- bottom card of tableau
   local topCard = self.currentPile:getPileCards()[#self.currentPile:getPileCards()]
+  -- top card of dragged stack
   local bottomCard = self.heldObject[1]
+  -- check if tableau is empty, in which case a king is the only valid card
   if topCard == nil then
     if tonumber(bottomCard.number) == 13 then
       return true
@@ -178,9 +186,13 @@ function GrabberClass:checkValidTableauPosition()
 end
 
 function GrabberClass:checkValidAcePilePosition()
+  -- can't put more than one card at a time into ace pile
   if #self.heldObject > 1 then return false end
+  -- held card
   local topCard = self.heldObject[1]
+  -- top card of ace pile
   local bottomCard = self.currentPile:getPileCards()[#self.currentPile:getPileCards()]
+  -- if ace pile is empty then only an ace can go here
   if bottomCard == nil then
     if tonumber(topCard.number) == 1 then return true end
   end

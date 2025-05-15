@@ -3,13 +3,6 @@ require "vector"
 
 PileClass = {}
 
-TableauType = {
-  ACEPILE = 0,
-  TABLEAU = 1,
-  HAND = 2,
-  DISCARD = 3
-}
-
 function PileClass:new(xPos, yPos, tableau)
   local pile = {}
   local metadata = {__index = PileClass}
@@ -113,21 +106,18 @@ end
 
 function PileClass:addCard(card)
   local spacing = 0
+  -- only tableaus and hand have spacing
   if self.type == 1 or self.type == 2 then
     spacing = 1
   end
   table.insert(self.cards, card)
   for i, iCard in ipairs(self.cards) do
-    iCard.position.x = self.position.x --+ self.size.x / 2
+    iCard.position.x = self.position.x
     iCard.position.y = self.position.y + ((i-1) * 15 * spacing)
   end
 end
 
 function PileClass:removeCard(card)
---  local spacing = 0
---  if self.type == 1 or self.type == 2 then
---    spacing = 1
---  end
   if card == nil then return end
   local index = -1;
   for i, iCard in ipairs(self.cards) do
@@ -137,17 +127,16 @@ function PileClass:removeCard(card)
   end
   if index == -1 then return end
   table.remove(self.cards, index)
---  card.position.x = self.position.x --+ self.size.x / 2
---  card.position.y = (self.position.y + self.size.y / 2) + ((#self.cards-1) * 15 * spacing)
 end
 
 function PileClass:refreshPile()
   local spacing = 0
+  -- only tableaus and hand have spacing
   if self.type == 1 or self.type == 2 then
     spacing = 1
   end
   for i, iCard in ipairs(self.cards) do
-    iCard.position.x = self.position.x --+ self.size.x / 2
+    iCard.position.x = self.position.x
     iCard.position.y = self.position.y + ((i-1) * 15 * spacing)
   end
 end

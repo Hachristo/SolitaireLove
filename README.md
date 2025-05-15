@@ -1,21 +1,26 @@
 # SolitaireLove  
   
 **Programming Patterns Used**  
-I used the update programming pattern for essentially all of this project. My reasoning for this intially was that I felt that the project would be 
-simple enough that implementing more complex patterns would save less time in the production phase of the project than it would take to set them up
-in the preproduction phase. Looking back on it now, I regret having chosen to do this, as it made my code less and less readable the more I added. I
-did my best to seperate functionality with an object oriented mindset, but debugging became a problem the more I added, and led to me running out of
-time to fix everything. I have some ideas for how I could've used other programming patterns, which I'll detail in the postmortem section.
+I used the state for the cards; cards have 3 seperate states: idle, mouse_over, and grabbed. Each card's state is updated depending on which tableau
+it resides in, and what position it takes in the tableau. This makes it much easier to keep track and update how each card should work when interacted with,
+rather than having to check elsewhere or invoke a lengthy list of conditionals in place, I can simply check the state to what should happen.
+Though I didn't know the difference at the time, I used the prototype pattern extensively in this project. Each card and pile is an example of a prototype,
+implemented through lua's table/metatable datatypes. The most prominent examples are in the card and pile prototypes, which I cloned at the start of the game
+to create the tableaus and populate them with cards. If I didn't use this pattern, I would've had to define everything within a single file and had to have 
+written a lot more redundant code.
 
-**Postmortem**  
-To start with a positive, I think that I did a good job with making seperate classes and keeping main relatively empty. Looking at the classes (tables),
-it's clear what each one's purpose is, and many of them inherit functionality from other classes appropriately.  
-Looking back, I realized that there were a few programming patterns that we've been going over in class that I should've employed here. The first thing that
-comes to mind is the flyweight pattern in relation to cards. I'm not sure how much performance would've been saved, but an obvious way to implement the
-flyweight pattern would've been to have the cards all draw their back sprite on the fly, rather than each drawing their own version of the same sprite.  
-Another pattern that might've helped especially with debugging is the observer pattern. Using events and listeners to recognize things like mouse up, mouse down,
-card stacking, and card removing would've removed the need for many of the update loops, which would've improved performance, but more importantly would've helped
-keep my code more readable.
+**Feedback**  
+I got feedback from Drew Whitmer on how I could clean up some of the clutter in my files. I deleted a lot of commented out code from older iterations of
+the project, and added more inline comments, mainly in grabber, to explain what my code was doing.
+
+**Postmortem**
+One of the main things that gave me problems in my refactor for this iteration of the project was the card stacking when dragging cards. I resolved to do this
+by changing the held object variable in my grabber class to be a table containing all the cards that I wanted to drag. I was stuck for a while trying to accomplish
+this because my grabber class kept getting longer and longer as I added more functionality to it, and I spent hours trying to debug what ended up being a small
+error where I was trying to check if the table of held cards was empty by comparing to an empty table rather than checking the length. This resulted in one of my
+many guards failing to catch a nil value which I thought was occuring much deeper into the process of grabbing cards. Ultimately I was able to implement card stacking,
+and while I think the way that I did it was ultimately worth it for how modular it could be for future iterations, I should've made more of an effort to seperate functionality
+into other functions within the grabber class to lessen the amount of code I was looking at at once when debugging.
 
 **Asset List**  
 Sprites: https://kenney.nl/assets/playing-cards-pack
