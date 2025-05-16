@@ -115,8 +115,9 @@ function PileClass:addCard(card)
     spacing = 1
   end
   if self.type == 0 then
-    if card.number == 13 then
+    if tonumber(card.number) == 13 then
       self.complete = true
+      print("complete")
     end
   end
   table.insert(self.cards, card)

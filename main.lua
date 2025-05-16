@@ -46,7 +46,7 @@ function love.draw()
   end
   love.graphics.setColor(1, 1, 1, 1)
   if won then
-    love.graphics.print("You Win!", 450, 300)
+    love.graphics.print("You Win!", 450, 200)
   end
   love.graphics.print("Press R to restart",0,0)
   
@@ -76,6 +76,13 @@ end
 
 function resetGame()
   loadGame(seed)
+end
+
+function winSetup()
+  pileTable[8]:addCard(CardClass:new(0, 0, "card_spades_13.png"))
+  pileTable[9]:addCard(CardClass:new(0, 0, "card_clubs_13.png"))
+  pileTable[10]:addCard(CardClass:new(0, 0, "card_hearts_13.png"))
+  pileTable[11]:addCard(CardClass:new(0, 0, "card_diamonds_13.png"))
 end
 
 function loadGame(seed)
@@ -110,4 +117,5 @@ function loadGame(seed)
   drawPile = DrawPileClass:new(100, 100, cardTable, deck, pileTable[12], pileTable[13])
   
   gameSetup()
+  --winSetup()
 end
